@@ -62,7 +62,7 @@ function personal_newsletter_actions_handler(){
 	  $newsletter_table = $wpdb->prefix.'personal_newsletter';
 	  $query = "SELECT * FROM $newsletter_table WHERE id = ".$_GET['id'];
       $data = $wpdb->get_row($query);                    
-      personal_newsletter_run_campaigns($data);
+      personal_newsletter_run_campaigns($data, true);
 	  //update the last_run field of this campaign
 	  $settings['last_run'] = time();
 	  $where = array('id' => $_GET['id']); 

@@ -28,22 +28,23 @@
 define('PERSONAL_OPTIONS', 'personal_opts');
 define('PERSONAL_VERSION', '0.0.1');
 
-function personal_newsletter_run_campaigns($data){
+function personal_newsletter_run_campaigns($data, $manual=false){
    global $wpdb;
    $subject = $data->email_subject;
    $template = $data->email_template;
-   $post_count = $data->number;
-   $selected_cats = implode(",", $cats);
    
    // Reset Post Data
    wp_reset_postdata();
    
    $users = get_users(array('fields' => 'all_with_meta'));
 
-   // TODO: chequear que solo se envíe el mail a los usuarios que tienen la frecuencia igual a la frecuencia de la entrada.
    //$fp = fopen('/tmp/wp_mail.html', 'w');
    foreach($users as $user) {
-      if ( get_the_author_meta( 'personal_newsletter_suscr', $user->ID ) == 'S' ) {
+      if ( 
+            ( get_the_author_meta( 'personal_newsletter_suscr', $user->ID ) == 'S' )
+        and ( $manual
+         or   get_the_author_meta( 'personal_newsletter_frec', $user->ID ) == $data->send_mode )
+        ) {
         $email = $user->user_email;
         ob_start();
         eval( "?>$template<?" );
